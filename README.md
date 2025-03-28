@@ -85,5 +85,7 @@ This is the place for you to write reflections:
 ### Mandatory (Subscriber) Reflections
 
 #### Reflection Subscriber-1
+1. Kita menggunakan RwLock<> untuk sinkronisasi notifikasi karena memiliki sifat lock hanya untuk write. Hanya boleh ada 1 user yang melakukan write, dimana selama dia write, writer lain akan di block oleh thread. Namun, untuk read RwLock membuka akses sehingga read secara parallel didukung. Hal ini bagus untuk design pattern observer dimana terdapat lebih banyak reader daripada writer sehingga efektif untuk digunakan. Mutex<> tidak kami pakai karena akses akan di lock secara utuh dan hanya ada 1 user yang dapat masuk untuk read maupun write. Hal ini tidak efektif, mengetahui bahwa kita memiliki reader atau subscriber yang banyak sehingga akan membuat queue yang panjang hanya untuk read.
+2. Rust dikenal sebagai programming language yang thread safe. Hal ini mengakibatkan kita tidak bisa langsung mengedit static variable seperti Java. Kita harus memasang Mutex<> atau RwLock<> untuk menspesifikasi lock access rights. Hal inilah yang melindungi kita dari race condition, suatu vulnerability yang tidak langsung di handle oleh Java. Dengan lazy_static, kita bisa menginisialisasi vec sebagai variabel static yang thread safe dan modifiable di runtime dengan wrapper RwLock<> atau Mutex<>.
 
 #### Reflection Subscriber-2
